@@ -1,28 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget - ExpenseFlow</title>
+    <title>Budgets - ExpenseFlow</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/expenses.css">
+    <link rel="stylesheet" href="css/budget.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js"></script>
 </head>
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">ExpenseFlow</div>
-            <ul class="nav-links">
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="expenses.html">Expenses</a></li>
-                <li><a href="budget.html" class="active">Budget</a></li>
-                <li><a href="#" id="logoutBtn">Logout</a></li>
-            </ul>
+<body class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-wallet"></i> <span>ExpenseFlow</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main Menu</div>
+            <a href="dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            
+            <div class="nav-section-label">Financials</div>
+            <a href="expenses.html" class="nav-item">
+                <i class="fa-solid fa-receipt"></i> <span>Expenses</span>
+            </a>
+            <a href="budget.html" class="nav-item active">
+                <i class="fa-solid fa-piggy-bank"></i> <span>Budgets</span>
+            </a>
         </nav>
-    </header>
-    <main class="budget-main">
-        <h1>Monthly Budget Settings</h1>
-        <p>Set and manage spending limits for each category.</p>
+        <div class="sidebar-footer">
+            <button id="logout-btn" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Topbar Header -->
+        <header class="topbar">
+            <div>
+                <h2>Monthly Budget Planner</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Set spending targets, track progress, and avoid overspending.</p>
+            </div>
+            <div class="topbar-right">
+                <button class="theme-toggle-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-sun"></i>
+                    <span class="theme-text">Theme</span>
+                </button>
+                <div class="user-badge">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <span id="user-display-name">User Profile</span>
+                </div>
+                <button id="openBudgetModalBtn" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.88rem;">
+                    <i class="fa-solid fa-pen-to-square"></i> Set Budget
+                </button>
+            </div>
+        </header>
+
+        <!-- Budget Hero Card -->
+        <section class="card budget-hero-card">
+            <div class="budget-hero-header">
+                <div class="budget-title-area">
+                    <h3 id="budget-period-heading">
+                        <i class="fa-solid fa-bullseye" style="color: var(--primary-500);"></i> 
+                        <span id="display-month-year">August 2026</span>
+                    </h3>
+                </div>
+
+                <!-- Month / Year Selector -->
+                <div class="period-selector">
+                    <i class="fa-solid fa-calendar-days" style="color: var(--text-dim); margin-left: 0.3rem;"></i>
+                    <select id="budgetMonthSelect" class="period-select" aria-label="Select Month">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="budgetYearSelect" class="period-select" aria-label="Select Year">
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 4 Key Stat Metric Cards -->
+            <div class="budget-stats-grid">
+                <!-- 1. Monthly Budget -->
+                <div class="budget-stat-box">
+                    <span class="budget-stat-label"><i class="fa-solid fa-wallet"></i> Monthly Budget</span>
+                    <span id="budget-amount-display" class="budget-stat-value">₹0.00</span>
+                </div>
+
+                <!-- 2. Total Spent -->
+                <div class="budget-stat-box">
+                    <span class="budget-stat-label"><i class="fa-solid fa-receipt"></i> Total Spent</span>
+                    <span id="budget-spent-display" class="budget-stat-value">₹0.00</span>
+                </div>
+
+                <!-- 3. Remaining Balance -->
+                <div class="budget-stat-box">
+                    <span class="budget-stat-label"><i class="fa-solid fa-scale-balanced"></i> Remaining</span>
+                    <span id="budget-remaining-display" class="budget-stat-value">₹0.00</span>
+                </div>
+
+                <!-- 4. Percentage Used -->
+                <div class="budget-stat-box">
+                    <span class="budget-stat-label"><i class="fa-solid fa-chart-pie"></i> Used</span>
+                    <span id="budget-percentage-display" class="budget-stat-value">0%</span>
+                </div>
+            </div>
+
+            <!-- Visual Progress Bar -->
+            <div class="budget-progress-section">
+                <div class="progress-header">
+                    <span>Spending Progress</span>
+                    <span id="progress-percentage-text" class="progress-percent-label">0% Used</span>
+                </div>
+                <div class="progress-track">
+                    <div id="budget-progress-bar" class="progress-bar-fill normal" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Status Alert Banner -->
+            <div id="budget-alert-banner" class="budget-alert-banner unbudgeted">
+                <div class="budget-alert-icon" id="budget-alert-icon"><i class="fa-solid fa-info-circle"></i></div>
+                <div id="budget-alert-text">No budget has been set for this month. Click "Set Budget" above to allocate one.</div>
+            </div>
+        </section>
+
+        <!-- Budget History Overview -->
+        <section class="card budget-history-card">
+            <div class="budget-history-header">
+                <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-400); margin-right: 0.5rem;"></i> Budget History</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Budget Limit</th>
+                            <th>Actual Spending</th>
+                            <th>Remaining</th>
+                            <th>Progress</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="budget-history-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading budget history...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
+
+    <!-- Set / Update Budget Modal -->
+    <div id="budgetModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content" style="max-width: 460px;">
+            <div class="modal-header">
+                <h3 id="budgetModalTitle">Set Monthly Budget</h3>
+                <button type="button" id="closeBudgetModalBtn" class="modal-close" aria-label="Close dialog">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="budgetForm">
+                <div class="modal-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="formBudgetMonth">Month *</label>
+                            <select id="formBudgetMonth" class="form-control">
+                                <option value="1">January (1)</option>
+                                <option value="2">February (2)</option>
+                                <option value="3">March (3)</option>
+                                <option value="4">April (4)</option>
+                                <option value="5">May (5)</option>
+                                <option value="6">June (6)</option>
+                                <option value="7">July (7)</option>
+                                <option value="8">August (8)</option>
+                                <option value="9">September (9)</option>
+                                <option value="10">October (10)</option>
+                                <option value="11">November (11)</option>
+                                <option value="12">December (12)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="formBudgetYear">Year *</label>
+                            <input type="number" id="formBudgetYear" class="form-control" min="2000" max="2100" placeholder="2026">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="formBudgetAmount">Budget Amount (₹) *</label>
+                        <input type="number" id="formBudgetAmount" class="form-control" placeholder="e.g. 20000" min="1" step="1">
+                        <span id="budgetAmountError" class="form-error"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelBudgetModalBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastMessage" class="toast-notification" role="alert"></div>
+
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/budget.js"></script>
 </body>
 </html>

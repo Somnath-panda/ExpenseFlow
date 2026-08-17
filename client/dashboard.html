@@ -1,30 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ExpenseFlow</title>
+    <title>Financial Dashboard - ExpenseFlow</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">ExpenseFlow</div>
-            <ul class="nav-links">
-                <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                <li><a href="expenses.html">Expenses</a></li>
-                <li><a href="budget.html">Budget</a></li>
-                <li><a href="#" id="logoutBtn">Logout</a></li>
-            </ul>
+<body class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-wallet"></i> <span>ExpenseFlow</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main Menu</div>
+            <a href="dashboard.html" class="nav-item active">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            
+            <div class="nav-section-label">Financials</div>
+            <a href="expenses.html" class="nav-item">
+                <i class="fa-solid fa-receipt"></i> <span>Expenses</span>
+            </a>
+            <a href="budget.html" class="nav-item">
+                <i class="fa-solid fa-piggy-bank"></i> <span>Budgets</span>
+            </a>
         </nav>
-    </header>
-    <main class="dashboard-main">
-        <h1>Dashboard</h1>
-        <p>Overview of your income, expenses, and financial health.</p>
+        <div class="sidebar-footer">
+            <button id="logout-btn" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Dashboard Area -->
+    <main class="main-content">
+        <!-- Topbar Header -->
+        <header class="topbar">
+            <div>
+                <h2>Financial Overview</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Welcome back! Here is a summary of your financial health.</p>
+            </div>
+            <div class="topbar-right">
+                <button class="theme-toggle-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-sun"></i>
+                    <span class="theme-text">Theme</span>
+                </button>
+                <div class="user-badge">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <span id="user-display-name">User Profile</span>
+                </div>
+                <a href="expenses.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.88rem;">
+                    <i class="fa-solid fa-plus"></i> Add Expense
+                </a>
+            </div>
+        </header>
+
+        <!-- 5 KPI Summary Cards Grid -->
+        <section class="dashboard-grid">
+            <!-- 1. Total Expenses -->
+            <div class="card stat-card">
+                <div class="stat-card-header">
+                    <h3>Total Expenses</h3>
+                    <div class="stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                </div>
+                <p id="total-expenses" class="stat-value">₹0.00</p>
+                <span class="stat-subtext"><i class="fa-solid fa-infinity"></i> Lifetime all-time total</span>
+            </div>
+
+            <!-- 2. Monthly Expenses -->
+            <div class="card stat-card stat-monthly">
+                <div class="stat-card-header">
+                    <h3>Monthly Expenses</h3>
+                    <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                </div>
+                <p id="monthly-expenses" class="stat-value">₹0.00</p>
+                <span class="stat-subtext" id="current-month-label"><i class="fa-solid fa-calendar-days"></i> Current Month</span>
+            </div>
+
+            <!-- 3. Monthly Budget -->
+            <div class="card stat-card stat-budget">
+                <div class="stat-card-header">
+                    <h3>Monthly Budget</h3>
+                    <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+                </div>
+                <p id="monthly-budget" class="stat-value">₹0.00</p>
+                <span class="stat-subtext"><i class="fa-solid fa-sliders"></i> Target spending limit</span>
+            </div>
+
+            <!-- 4. Remaining Budget -->
+            <div class="card stat-card stat-remaining">
+                <div class="stat-card-header">
+                    <h3>Remaining Budget</h3>
+                    <div class="stat-icon"><i class="fa-solid fa-piggy-bank"></i></div>
+                </div>
+                <p id="remaining-budget" class="stat-value">₹0.00</p>
+                <span class="stat-subtext" id="budget-status-text"><i class="fa-solid fa-shield-halved"></i> Within budget</span>
+            </div>
+
+            <!-- 5. Transaction Count & Stats -->
+            <div class="card stat-card stat-count">
+                <div class="stat-card-header">
+                    <h3>Transactions</h3>
+                    <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+                </div>
+                <p id="transaction-count" class="stat-value">0</p>
+                <span class="stat-subtext">
+                    <span>Highest: <strong id="highest-expense" style="color: var(--text-main);">₹0</strong></span> | 
+                    <span>Avg: <strong id="average-expense" style="color: var(--text-main);">₹0</strong></span>
+                </span>
+            </div>
+        </section>
+
+        <!-- Charts Grid -->
+        <section class="charts-grid">
+            <!-- Category Spending Doughnut Chart -->
+            <div class="card chart-card">
+                <div class="chart-card-header">
+                    <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary-500); margin-right: 0.5rem;"></i> Category Breakdown</h3>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="categoryChart"></canvas>
+                    <div id="category-empty" class="chart-empty" style="display: none;">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <p>No category expenses recorded yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Spending Bar / Line Chart -->
+            <div class="card chart-card">
+                <div class="chart-card-header">
+                    <h3><i class="fa-solid fa-chart-column" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i> Monthly Spending Trend</h3>
+                    <span class="badge-year" id="trend-year-badge">2026</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="monthlyTrendChart"></canvas>
+                    <div id="trend-empty" class="chart-empty" style="display: none;">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <p>No monthly expenses recorded yet for this year.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Transactions Table Section -->
+        <section class="card recent-transactions-card">
+            <div class="recent-header">
+                <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-400); margin-right: 0.5rem;"></i> Recent Transactions</h3>
+                <a href="expenses.html" class="view-all-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <th style="padding: 1rem 1.5rem; text-align: left; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">Date</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">Title</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">Category</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-transactions-tbody">
+                        <tr>
+                            <td colspan="4" class="text-center" style="padding: 2.5rem; color: var(--text-muted); text-align: center;">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading recent transactions...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
+
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -1,33 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - ExpenseFlow</title>
+    <title>Create Account - ExpenseFlow</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js"></script>
 </head>
-<body>
-    <div class="auth-container">
-        <h2>Create an Account</h2>
-        <div id="alertMessage" class="alert-box" style="display: none;"></div>
-        <form id="registerForm">
+<body class="auth-body">
+    <div class="auth-header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle Theme">
+            <i class="fa-solid fa-sun"></i>
+            <span class="theme-text">Theme</span>
+        </button>
+    </div>
+
+    <div class="auth-card">
+        <a href="index.html" class="auth-logo">
+            <i class="fa-solid fa-wallet"></i> ExpenseFlow
+        </a>
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">Start tracking your personal finances today</p>
+        
+        <div id="alert-box" class="alert hidden"></div>
+
+        <form id="register-form">
             <div class="form-group">
                 <label for="name">Full Name</label>
-                <input type="text" id="name" required placeholder="John Doe">
+                <input type="text" id="name" class="form-control" required placeholder="John Doe">
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" required placeholder="user@example.com">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" required placeholder="name@example.com">
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" required placeholder="At least 6 characters">
+                <input type="password" id="password" class="form-control" required placeholder="••••••••">
             </div>
-            <button type="submit" id="submitBtn" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary btn-block">Get Started <i class="fa-solid fa-user-plus"></i></button>
         </form>
-        <p>Already have an account? <a href="login.html">Login here</a></p>
+
+        <p class="auth-footer">
+            Already have an account? <a href="login.html">Sign In</a>
+        </p>
     </div>
+
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 </body>

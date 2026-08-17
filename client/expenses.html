@@ -1,60 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Expenses - ExpenseFlow</title>
+    <title>Expenses - ExpenseFlow</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/expenses.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js"></script>
 </head>
-<body>
-    <!-- Navigation Bar -->
-    <header>
-        <nav class="navbar" aria-label="Main Navigation">
-            <div class="logo">ExpenseFlow</div>
-            <ul class="nav-links">
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="expenses.html" class="active">Expenses</a></li>
-                <li><a href="budget.html">Budget</a></li>
-                <li><a href="#" id="logoutBtn">Logout</a></li>
-            </ul>
+<body class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-wallet"></i> ExpenseFlow
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main Menu</div>
+            <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            
+            <div class="nav-section-label">Financials</div>
+            <a href="expenses.html" class="nav-item active"><i class="fa-solid fa-receipt"></i> Expenses</a>
+            <a href="budget.html" class="nav-item"><i class="fa-solid fa-piggy-bank"></i> Budgets</a>
         </nav>
-    </header>
+        <div class="sidebar-footer">
+            <button id="logoutBtn" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+        </div>
+    </aside>
 
-    <!-- Main Container -->
-    <main class="expenses-container">
-        <!-- Toast Notification Alert -->
-        <div id="toastMessage" class="toast-notification" aria-live="polite" style="display: none;"></div>
-
-        <!-- Page Header -->
-        <div class="page-header">
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Topbar Header -->
+        <header class="topbar">
             <div>
-                <h1>Expense Management</h1>
-                <p class="subtitle">Track, filter, and organize your daily expenditures.</p>
+                <h2>Expense Management</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Track, filter, and organize your day-to-day spending.</p>
             </div>
-            <button type="button" id="openAddModalBtn" class="btn btn-primary btn-add">
-                <span class="btn-icon">+</span> Add Expense
-            </button>
+            <div class="topbar-actions">
+                <button class="theme-toggle-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-sun"></i>
+                    <span class="theme-text">Theme</span>
+                </button>
+                <button id="openAddModalBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add Expense
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Stat Row -->
+        <div class="expense-summary-grid">
+            <div class="card summary-pill-card">
+                <div class="summary-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                <div class="summary-info">
+                    <span class="summary-label">Total Filtered Amount</span>
+                    <span id="totalAmountDisplay" class="summary-value">₹0.00</span>
+                </div>
+            </div>
+            <div class="card summary-pill-card">
+                <div class="summary-icon alt"><i class="fa-solid fa-list-check"></i></div>
+                <div class="summary-info">
+                    <span class="summary-label">Expense Records</span>
+                    <span id="totalCountDisplay" class="summary-value">0</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Summary & Filters Bar -->
-        <section class="filters-card" aria-label="Filters and Search">
-            <div class="search-box">
-                <label for="searchInput" class="sr-only">Search Expenses</label>
-                <input type="text" id="searchInput" placeholder="Search by title or description..." aria-label="Search Expenses">
-            </div>
-            
-            <div class="filter-group">
-                <div class="filter-item">
-                    <label for="categoryFilter">Category</label>
-                    <select id="categoryFilter" aria-label="Filter by Category">
+        <!-- Filter & Search Toolbar -->
+        <section class="card filter-card">
+            <div class="filter-grid">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="searchInput"><i class="fa-solid fa-magnifying-glass"></i> Search</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by title or notes...">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="categoryFilter"><i class="fa-solid fa-tag"></i> Category</label>
+                    <select id="categoryFilter" class="form-control">
                         <option value="">All Categories</option>
                     </select>
                 </div>
-
-                <div class="filter-item">
-                    <label for="monthFilter">Month</label>
-                    <select id="monthFilter" aria-label="Filter by Month">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="monthFilter"><i class="fa-solid fa-calendar-days"></i> Month</label>
+                    <select id="monthFilter" class="form-control">
                         <option value="">All Months</option>
                         <option value="1">January</option>
                         <option value="2">February</option>
@@ -70,105 +99,101 @@
                         <option value="12">December</option>
                     </select>
                 </div>
-
-                <div class="filter-item">
-                    <label for="yearFilter">Year</label>
-                    <input type="number" id="yearFilter" placeholder="YYYY" min="2000" max="2100" aria-label="Filter by Year">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="yearFilter"><i class="fa-solid fa-calendar"></i> Year</label>
+                    <input type="number" id="yearFilter" class="form-control" placeholder="YYYY" min="2000" max="2100">
                 </div>
-
-                <button type="button" id="resetFiltersBtn" class="btn btn-secondary btn-reset">Reset</button>
+                <div>
+                    <button id="resetFiltersBtn" class="btn btn-secondary" style="height: 42px; width: 100%;">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- Total Summary Counter -->
-        <div class="summary-bar">
-            <div class="summary-item">
-                <span class="summary-label">Total Filtered Expenses:</span>
-                <span id="totalAmountDisplay" class="summary-value">₹0.00</span>
+        <!-- Expenses List / Table Section -->
+        <section class="card table-card">
+            <!-- Loading State -->
+            <div id="loadingState" class="state-container" style="display: none;">
+                <div class="spinner"></div>
+                <p style="color: var(--text-muted);">Loading your expenses...</p>
             </div>
-            <div class="summary-item">
-                <span class="summary-label">Total Count:</span>
-                <span id="totalCountDisplay" class="summary-value">0</span>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="state-container" style="display: none;">
+                <div class="state-icon"><i class="fa-solid fa-receipt"></i></div>
+                <h3>No Expenses Found</h3>
+                <p style="color: var(--text-muted); max-width: 400px;">No expenses match your search or filter criteria. Start by adding a new expense record.</p>
             </div>
-        </div>
 
-        <!-- Loading Indicator -->
-        <div id="loadingState" class="loading-spinner-container" style="display: none;">
-            <div class="spinner"></div>
-            <p>Loading your expenses...</p>
-        </div>
-
-        <!-- Empty State Message -->
-        <div id="emptyState" class="empty-state-card" style="display: none;">
-            <div class="empty-icon">💸</div>
-            <h3>No Expenses Found</h3>
-            <p>You don't have any expenses matching the current filters. Click "Add Expense" to get started!</p>
-        </div>
-
-        <!-- Expenses Table Container -->
-        <div id="expensesTableContainer" class="table-responsive">
-            <table class="expenses-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Description</th>
-                        <th scope="col" class="text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="expensesTbody">
-                    <!-- Dynamic Rows Will Be Injected Here -->
-                </tbody>
-            </table>
-        </div>
+            <!-- Expenses Table Container -->
+            <div id="expensesTableContainer" class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesTbody">
+                        <!-- Populated dynamically by expenses.js -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
-    <!-- Add / Edit Expense Modal Dialog -->
-    <div id="expenseModal" class="modal-backdrop" aria-hidden="true" style="display: none;">
-        <div class="modal-card" role="dialog" aria-labelledby="modalTitle">
+    <!-- Add / Edit Expense Modal -->
+    <div id="expenseModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Add New Expense</h2>
-                <button type="button" id="closeModalBtn" class="modal-close" aria-label="Close Modal">&times;</button>
+                <h3 id="modalTitle">Add New Expense</h3>
+                <button type="button" id="closeModalBtn" class="modal-close" aria-label="Close dialog">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <form id="expenseForm" novalidate>
-                <input type="hidden" id="expenseId" value="">
-                
-                <div class="form-group">
-                    <label for="expenseTitle">Title <span class="required">*</span></label>
-                    <input type="text" id="expenseTitle" required placeholder="e.g. Grocery Shopping">
-                    <span id="titleError" class="field-error"></span>
-                </div>
+            <form id="expenseForm">
+                <div class="modal-body">
+                    <input type="hidden" id="expenseId">
 
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label for="expenseAmount">Amount (₹) <span class="required">*</span></label>
-                        <input type="number" id="expenseAmount" step="0.01" min="0.01" required placeholder="0.00">
-                        <span id="amountError" class="field-error"></span>
+                    <div class="form-group">
+                        <label for="expenseTitle">Expense Title *</label>
+                        <input type="text" id="expenseTitle" class="form-control" placeholder="e.g., Grocery shopping, Uber ride">
+                        <span id="titleError" class="form-error"></span>
                     </div>
 
-                    <div class="form-group half">
-                        <label for="expenseCategory">Category <span class="required">*</span></label>
-                        <select id="expenseCategory" required>
-                            <option value="">Select Category</option>
-                        </select>
-                        <span id="categoryError" class="field-error"></span>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="expenseAmount">Amount (₹) *</label>
+                            <input type="number" id="expenseAmount" class="form-control" placeholder="0.00" step="0.01" min="0.01">
+                            <span id="amountError" class="form-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseCategory">Category *</label>
+                            <select id="expenseCategory" class="form-control">
+                                <option value="">Select Category</option>
+                            </select>
+                            <span id="categoryError" class="form-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expenseDate">Expense Date *</label>
+                        <input type="date" id="expenseDate" class="form-control">
+                        <span id="dateError" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="expenseDescription">Description / Notes (Optional)</label>
+                        <textarea id="expenseDescription" class="form-control" rows="3" placeholder="Add additional details or remarks..."></textarea>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="expenseDate">Date <span class="required">*</span></label>
-                    <input type="date" id="expenseDate" required>
-                    <span id="dateError" class="field-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="expenseDescription">Description (Optional)</label>
-                    <textarea id="expenseDescription" rows="3" placeholder="Add additional details..."></textarea>
-                </div>
-
-                <div class="modal-actions">
+                <div class="modal-footer">
                     <button type="button" id="cancelModalBtn" class="btn btn-secondary">Cancel</button>
                     <button type="submit" id="saveExpenseBtn" class="btn btn-primary">Save Expense</button>
                 </div>
@@ -177,24 +202,34 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal-backdrop" aria-hidden="true" style="display: none;">
-        <div class="modal-card modal-small" role="dialog" aria-labelledby="deleteModalTitle">
+    <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
-                <h2 id="deleteModalTitle">Confirm Delete</h2>
-                <button type="button" id="closeDeleteModalBtn" class="modal-close" aria-label="Close Modal">&times;</button>
+                <h3>Confirm Delete</h3>
+                <button type="button" id="closeDeleteModalBtn" class="modal-close" aria-label="Close dialog">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete <strong id="deleteExpenseTitle">this expense</strong>?</p>
-                <p class="text-muted text-sm">This action cannot be undone.</p>
+            <div class="modal-body" style="padding-top: 1.5rem; text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--danger); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <p style="font-size: 1.05rem; margin-bottom: 0.5rem;">Are you sure you want to delete this expense?</p>
+                <p id="deleteExpenseTitle" style="font-weight: 700; color: var(--text-main);"></p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">This action cannot be undone.</p>
             </div>
-            <div class="modal-actions">
+            <div class="modal-footer" style="justify-content: center;">
                 <button type="button" id="cancelDeleteBtn" class="btn btn-secondary">Cancel</button>
-                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">Delete Expense</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div id="toastMessage" class="toast-notification" role="alert"></div>
+
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/expenses.js"></script>
 </body>
 </html>

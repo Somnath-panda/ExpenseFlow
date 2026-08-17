@@ -1,29 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExpenseFlow - Personal Expense Tracker</title>
+    <title>ExpenseFlow – Smart Personal Expense Tracker</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js"></script>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">ExpenseFlow</div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="register.html">Register</a></li>
-            </ul>
-        </nav>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-wallet"></i> ExpenseFlow
+            </a>
+            <div class="nav-right">
+                <button class="theme-toggle-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-sun"></i>
+                    <span class="theme-text">Theme</span>
+                </button>
+                <a href="login.html" class="btn btn-outline">Sign In</a>
+                <a href="register.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
     </header>
+
     <main class="hero">
-        <h1>Smart & Simple Personal Expense Tracking</h1>
-        <p>Take control of your finances, track spending habits, set budgets, and gain key financial insights.</p>
+        <h1>Master Your Money with <span class="text-gradient">ExpenseFlow</span></h1>
+        <p>Track daily expenses, set smart monthly budgets, and visualize your financial health with interactive real-time analytics.</p>
         <div class="cta-buttons">
-            <a href="register.html" class="btn btn-primary">Get Started</a>
-            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="register.html" class="btn btn-primary">Create Free Account <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="login.html" class="btn btn-secondary">Sign In to Dashboard</a>
         </div>
     </main>
+
+    <script src="js/api.js"></script>
 </body>
 </html>

@@ -14,7 +14,8 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
+  dateStrings: true // Return MySQL DATE/DATETIME as exact strings to prevent UTC timezone shifts
 });
 
 module.exports = pool;

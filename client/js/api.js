@@ -1,5 +1,7 @@
 // Centralized API wrapper for ExpenseFlow Fetch API requests
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5000' && window.location.port !== ''
+  ? 'http://localhost:5000/api'
+  : '/api';
 
 // Retrieve authorization token from localStorage
 function getToken() {

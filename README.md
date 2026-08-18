@@ -2,12 +2,6 @@
 
 > A modern, full-stack personal finance and expense tracking application built for speed, simplicity, and security.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-expenseflow--live.vercel.app-00C7B7?style=for-the-badge&logo=vercel&logoColor=white)](https://expenseflow-live.vercel.app/)
-[![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express.js](https://img.shields.io/badge/Express.js-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Database](https://img.shields.io/badge/Database-TiDB%20%2F%20MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white)](https://tidbcloud.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-
 ---
 
 ## 🌐 Live Application
@@ -55,72 +49,6 @@
 | **Database** | TiDB Cloud Serverless (Distributed MySQL-compatible) / Local MySQL |
 | **Authentication** | JWT (jsonwebtoken), bcrypt password hashing |
 | **Hosting & Deployment** | Vercel (Serverless Node.js + Static CDN) |
-
----
-
-## 📂 Project Structure
-
-```text
-ExpenseFlow/
-├── client/                      # Static Frontend Application
-│   ├── css/                     # Custom stylesheet design system
-│   │   ├── auth.css
-│   │   ├── budget.css
-│   │   ├── dashboard.css
-│   │   ├── expenses.css
-│   │   └── style.css
-│   ├── js/                      # Modular client logic & API handlers
-│   │   ├── api.js               # Centralized Fetch API client wrapper
-│   │   ├── auth.js
-│   │   ├── budget.js
-│   │   ├── dashboard.js
-│   │   └── expenses.js
-│   ├── index.html               # Landing / Dashboard page
-│   ├── login.html               # Authentication login
-│   ├── register.html            # User registration
-│   ├── expenses.html            # Expense management table & filters
-│   └── budget.html              # Budgeting & targets
-├── database/                    # Database definitions
-│   └── schema.sql               # Database schema and initial seeds
-├── server/                      # Express Backend (MVC Architecture)
-│   ├── config/                  # Database connection pool (with TLS/SSL support)
-│   │   └── db.js
-│   ├── controllers/             # Request handlers
-│   │   ├── authController.js
-│   │   ├── budgetController.js
-│   │   ├── categoryController.js
-│   │   ├── dashboardController.js
-│   │   └── expenseController.js
-│   ├── middleware/              # Authentication & error handling middleware
-│   │   ├── authMiddleware.js
-│   │   └── errorMiddleware.js
-│   ├── models/                  # Database access layer
-│   ├── routes/                  # API endpoints definition
-│   ├── app.js                   # Express application setup
-│   └── server.js                # Local server entry point
-├── vercel.json                  # Vercel deployment configuration
-├── API_TESTING_PLAN.md          # Complete API test suite documentation
-└── ExpenseFlow.postman_collection.json # Postman collection
-```
-
----
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description | Protected |
-| :--- | :--- | :--- | :---: |
-| `GET` | `/api/health` | Service health & database connectivity check | ❌ |
-| `POST` | `/api/auth/register` | Register a new user | ❌ |
-| `POST` | `/api/auth/login` | Authenticate user & return JWT | ❌ |
-| `GET` | `/api/auth/profile` | Get logged-in user profile | ✅ |
-| `GET` | `/api/categories` | List all expense categories | ❌ |
-| `GET` | `/api/expenses` | Retrieve filtered & paginated user expenses | ✅ |
-| `POST` | `/api/expenses` | Create a new expense entry | ✅ |
-| `PUT` | `/api/expenses/:id` | Update an existing expense | ✅ |
-| `DELETE`| `/api/expenses/:id` | Delete an expense | ✅ |
-| `GET` | `/api/dashboard/summary` | Get aggregated KPI totals & category breakdown | ✅ |
-| `GET` | `/api/budget` | Get budget target and spending for a month/year | ✅ |
-| `POST` | `/api/budget` | Set or update monthly budget limit | ✅ |
 
 ---
 

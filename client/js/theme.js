@@ -3,14 +3,23 @@
 (function () {
   // Apply saved theme immediately before DOM renders to prevent white/dark flash
   const savedTheme = localStorage.getItem('expenseflow_theme') || 
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark'); // Default to dark premium theme
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
   
   document.documentElement.setAttribute('data-theme', savedTheme);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Add page entrance animation class
-  document.body.classList.add('page-fade-in');
+  // Animate main content and page entrance softly
+  const mainContent = document.querySelector('.main-content');
+  const authCard = document.querySelector('.auth-card');
+  
+  if (mainContent) {
+    mainContent.classList.add('content-fade-in');
+  } else if (authCard) {
+    authCard.classList.add('content-fade-in');
+  } else {
+    document.body.classList.add('page-fade-in');
+  }
 
   // Initialize theme toggle buttons across all pages
   const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
@@ -44,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('expenseflow_theme', newTheme);
       updateThemeUI(newTheme);
 
-      // Trigger custom event so Chart.js can update color palette if rendered
+      // Trigger custom event so Chart.js and components update color palette
       window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
     });
   });
@@ -61,10 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (targetUrl === currentPath) return;
 
       e.preventDefault();
-      document.body.classList.add('page-fade-out');
+
+      // Immediate tactile feedback on sidebar links
+      if (link.classList.contains('nav-item')) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        link.classList.add('active');
+      }
+
+      // Smooth content exit transition
+      const targetContainer = document.querySelector('.main-content') || document.querySelector('.auth-card') || document.body;
+      targetContainer.classList.add('content-fade-out');
+
       setTimeout(() => {
         window.location.href = targetUrl;
-      }, 200);
+      }, 160);
     });
   });
 });

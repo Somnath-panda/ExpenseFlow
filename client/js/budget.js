@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // 2. Initialize User Profile
-  initUserProfile();
-
-  // 3. Initialize Period Selectors
+  // 2. Initialize Period Selectors
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -22,33 +19,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (monthSelect) monthSelect.value = currentMonth.toString();
   if (yearSelect) yearSelect.value = currentYear.toString();
 
-  // 4. Setup Event Listeners
+  // 3. Setup Event Listeners
   setupEventListeners();
 
-  // 5. Initial Data Load
+  // 4. Initial Data Load
   await loadBudgetData();
 });
-
-// Initialize User Profile Badge
-function initUserProfile() {
-  const userString = localStorage.getItem('user');
-  if (userString) {
-    try {
-      const user = JSON.parse(userString);
-      const nameElement = document.getElementById('user-display-name');
-      const avatarElement = document.getElementById('user-avatar');
-
-      if (nameElement && user.name) {
-        nameElement.textContent = user.name;
-      }
-      if (avatarElement && user.name) {
-        avatarElement.textContent = user.name.charAt(0).toUpperCase();
-      }
-    } catch (e) {
-      console.error('Failed to parse user profile:', e);
-    }
-  }
-}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -76,6 +52,15 @@ function setupEventListeners() {
   }
 
   if (form) form.addEventListener('submit', handleBudgetSubmit);
+
+  // Keyboard Accessibility
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (modal && modal.classList.contains('active')) {
+        closeBudgetModal();
+      }
+    }
+  });
 
   // Logout
   const logoutBtn = document.getElementById('logout-btn') || document.getElementById('logoutBtn');
@@ -216,23 +201,22 @@ function renderBudgetHistory(history) {
     const statusClass = item.percentageUsed >= 100 ? 'exceeded' : item.percentageUsed >= 80 ? 'warning' : 'normal';
 
     const tr = document.createElement('tr');
-    tr.style.borderBottom = '1px solid var(--border-color)';
     tr.innerHTML = `
-      <td style="padding: 1rem 1.5rem; font-weight: 600;"><strong>${monthName} ${item.year}</strong></td>
-      <td style="padding: 1rem 1.5rem;">${formatCurrency(item.budget)}</td>
-      <td style="padding: 1rem 1.5rem;">${formatCurrency(item.spent)}</td>
-      <td style="padding: 1rem 1.5rem; font-weight: 700; color: ${item.remaining < 0 ? 'var(--danger)' : 'var(--text-main)'};">
+      <td style="font-weight: 600;"><strong>${monthName} ${item.year}</strong></td>
+      <td>${formatCurrency(item.budget)}</td>
+      <td>${formatCurrency(item.spent)}</td>
+      <td style="font-weight: 700; color: ${item.remaining < 0 ? 'var(--danger)' : 'var(--text-main)'};">
         ${formatCurrency(item.remaining)}
       </td>
-      <td style="padding: 1rem 1.5rem;">
+      <td>
         <div class="mini-progress">
-          <div class="mini-progress-fill ${statusClass}" style="width: ${cappedPct}%; background: ${statusClass === 'exceeded' ? '#ef4444' : statusClass === 'warning' ? '#f59e0b' : '#10b981'};"></div>
+          <div class="mini-progress-fill ${statusClass}" style="width: ${cappedPct}%; background-color: ${statusClass === 'exceeded' ? '#ef4444' : statusClass === 'warning' ? '#f59e0b' : '#10b981'};"></div>
         </div>
         <span style="font-size: 0.85rem; font-weight: 600;">${item.percentageUsed}%</span>
       </td>
-      <td class="text-right" style="padding: 1rem 1.5rem;">
-        <button type="button" class="btn-action btn-edit" data-month="${item.month}" data-year="${item.year}" data-amount="${item.budget}">
-          <i class="fa-solid fa-pen"></i> Edit
+      <td class="text-right">
+        <button type="button" class="btn-action btn-edit" data-month="${item.month}" data-year="${item.year}" data-amount="${item.budget}" aria-label="Edit budget for ${monthName} ${item.year}">
+          <i class="fa-solid fa-pen-to-square"></i> Edit
         </button>
       </td>
     `;
@@ -279,6 +263,7 @@ function openBudgetModalWithValues(month, year, amount) {
     modal.style.display = 'flex';
     requestAnimationFrame(() => {
       modal.classList.add('active');
+      if (amountInput) amountInput.focus();
     });
     modal.setAttribute('aria-hidden', 'false');
   }

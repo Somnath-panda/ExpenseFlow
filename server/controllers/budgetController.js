@@ -1,5 +1,7 @@
 const budgetModel = require('../models/budgetModel');
 
+const MAX_BUDGET_AMOUNT = 999999999.99;
+
 const budgetController = {
   // GET /api/budget
   async getBudget(req, res, next) {
@@ -18,7 +20,7 @@ const budgetController = {
       if (isNaN(year) || year < 2000 || year > 2100) {
         return res.status(400).json({
           success: false,
-          message: 'Invalid year. Year must be a valid 4-digit year.'
+          message: 'Invalid year. Year must be a valid 4-digit year between 2000 and 2100.'
         });
       }
 
@@ -61,10 +63,17 @@ const budgetController = {
       }
 
       const parsedAmount = parseFloat(amount);
-      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount) || parsedAmount <= 0) {
         return res.status(400).json({
           success: false,
           message: 'Amount is required and must be a positive number greater than 0.'
+        });
+      }
+
+      if (parsedAmount > MAX_BUDGET_AMOUNT) {
+        return res.status(400).json({
+          success: false,
+          message: `Budget amount cannot exceed ₹${MAX_BUDGET_AMOUNT.toLocaleString('en-IN')}.`
         });
       }
 
@@ -110,10 +119,17 @@ const budgetController = {
       }
 
       const parsedAmount = parseFloat(amount);
-      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount) || parsedAmount <= 0) {
         return res.status(400).json({
           success: false,
           message: 'Amount is required and must be a positive number greater than 0.'
+        });
+      }
+
+      if (parsedAmount > MAX_BUDGET_AMOUNT) {
+        return res.status(400).json({
+          success: false,
+          message: `Budget amount cannot exceed ₹${MAX_BUDGET_AMOUNT.toLocaleString('en-IN')}.`
         });
       }
 

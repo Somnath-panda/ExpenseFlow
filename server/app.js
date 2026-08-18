@@ -16,8 +16,8 @@ const app = express();
 
 // Middleware configuration
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '500kb' }));
+app.use(express.urlencoded({ extended: true, limit: '500kb' }));
 
 // Serve static frontend files from client directory
 app.use(express.static(path.join(__dirname, '../client')));

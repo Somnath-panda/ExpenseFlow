@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const toastMessage = document.getElementById('toastMessage');
   const logoutBtn = document.getElementById('logoutBtn') || document.getElementById('logout-btn');
+  const exportCsvBtn = document.getElementById('exportCsvBtn');
 
   // Modal Elements
   const expenseModal = document.getElementById('expenseModal');
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Internal State
   let categoryList = [];
+  let currentExpensesList = [];
   let currentExpenseToDelete = null;
 
   // Initial Setup
@@ -132,6 +134,23 @@ document.addEventListener('DOMContentLoaded', () => {
       confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
     }
 
+    // Keyboard Accessibility (Escape key closes modals)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (expenseModal && expenseModal.classList.contains('active')) {
+          closeModal();
+        }
+        if (deleteModal && deleteModal.classList.contains('active')) {
+          closeDeleteModal();
+        }
+      }
+    });
+
+    // Export to CSV
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', exportExpensesToCSV);
+    }
+
     // Logout
     if (logoutBtn) {
       logoutBtn.addEventListener('click', (e) => {
@@ -146,6 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       categoryList = await fetchCategories();
       
+      // Ensure 'Other' category is positioned at the very end
+      categoryList.sort((a, b) => {
+        if (a.name === 'Other') return 1;
+        if (b.name === 'Other') return -1;
+        return a.name.localeCompare(b.name);
+      });
+
       if (categoryFilter) {
         categoryFilter.innerHTML = '<option value="">All Categories</option>';
       }
@@ -206,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render expenses into table
   function renderExpenses(expenses) {
+    currentExpensesList = expenses || [];
     if (!expensesTbody) return;
     expensesTbody.innerHTML = '';
 
@@ -239,10 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <td style="color: var(--text-muted);">${escapeHtml(item.description || '-')}</td>
         <td class="text-right">
           <div class="action-buttons">
-            <button type="button" class="btn-action btn-edit" data-id="${item.id}">
+            <button type="button" class="btn-action btn-edit" data-id="${item.id}" aria-label="Edit expense ${escapeHtml(item.title)}">
               <i class="fa-solid fa-pen-to-square"></i> Edit
             </button>
-            <button type="button" class="btn-action btn-danger" data-id="${item.id}">
+            <button type="button" class="btn-action btn-danger" data-id="${item.id}" aria-label="Delete expense ${escapeHtml(item.title)}">
               <i class="fa-solid fa-trash-can"></i> Delete
             </button>
           </div>
@@ -290,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     expenseModal.style.display = 'flex';
     requestAnimationFrame(() => {
       expenseModal.classList.add('active');
+      if (expenseTitleInput) expenseTitleInput.focus();
     });
     expenseModal.setAttribute('aria-hidden', 'false');
   }
@@ -321,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     expenseModal.style.display = 'flex';
     requestAnimationFrame(() => {
       expenseModal.classList.add('active');
+      if (expenseTitleInput) expenseTitleInput.focus();
     });
     expenseModal.setAttribute('aria-hidden', 'false');
   }
@@ -414,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteModal.style.display = 'flex';
     requestAnimationFrame(() => {
       deleteModal.classList.add('active');
+      if (confirmDeleteBtn) confirmDeleteBtn.focus();
     });
     deleteModal.setAttribute('aria-hidden', 'false');
   }
@@ -514,13 +544,55 @@ document.addEventListener('DOMContentLoaded', () => {
     return dateStr;
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+  // Export Filtered Expenses to CSV File
+  function exportExpensesToCSV() {
+    if (!currentExpensesList || currentExpensesList.length === 0) {
+      showToast('No expenses available to export.', 'error');
+      return;
+    }
+
+    const headers = ['Date', 'Title', 'Category', 'Amount (INR)', 'Description'];
+    const rows = currentExpensesList.map(exp => {
+      const dateVal = exp.expense_date ? (typeof exp.expense_date === 'string' ? exp.expense_date.split('T')[0] : exp.expense_date) : '';
+      const amountVal = (parseFloat(exp.amount) || 0).toFixed(2);
+      return [
+        dateVal,
+        exp.title || '',
+        exp.category_name || 'Other',
+        amountVal,
+        exp.description || ''
+      ];
+    });
+
+    // Build RFC 4180 CSV content
+    const csvContent = [
+      headers.map(escapeCsvField).join(','),
+      ...rows.map(row => row.map(escapeCsvField).join(','))
+    ].join('\r\n');
+
+    // Create Blob with UTF-8 BOM so Excel opens with correct encoding
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ExpenseFlow_Expenses_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showToast(`Successfully exported ${currentExpensesList.length} expenses to CSV!`, 'success');
+  }
+
+  function escapeCsvField(field) {
+    if (field === null || field === undefined) return '""';
+    const str = String(field);
+    if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return `"${str}"`;
   }
 });

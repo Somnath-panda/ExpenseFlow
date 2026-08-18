@@ -12,12 +12,18 @@
     <script src="js/theme.js"></script>
 </head>
 <body class="dashboard-layout">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <a href="dashboard.html" class="logo">
                 <i class="fa-solid fa-wallet"></i> <span>ExpenseFlow</span>
             </a>
+            <button id="sidebarCloseBtn" class="sidebar-close-btn" aria-label="Close sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         <nav class="sidebar-nav">
             <div class="nav-section-label">Main Menu</div>
@@ -44,22 +50,45 @@
     <main class="main-content">
         <!-- Topbar Header -->
         <header class="topbar">
-            <div>
-                <h2>Monthly Budget Planner</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Set spending targets, track progress, and avoid overspending.</p>
+            <div class="topbar-left">
+                <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open navigation menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div>
+                    <h2>Monthly Budget Planner</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Set spending targets, track progress, and avoid overspending.</p>
+                </div>
             </div>
             <div class="topbar-right">
+                <button id="openBudgetModalBtn" class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.84rem;">
+                    <i class="fa-solid fa-pen-to-square"></i> Set Budget
+                </button>
                 <button class="theme-toggle-btn" aria-label="Toggle Theme">
                     <i class="fa-solid fa-sun"></i>
                     <span class="theme-text">Theme</span>
                 </button>
-                <div class="user-badge">
-                    <div id="user-avatar" class="user-avatar">U</div>
-                    <span id="user-display-name">User Profile</span>
+                <div class="user-profile-menu">
+                    <div id="userBadge" class="user-badge" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" aria-label="User profile menu">
+                        <div id="user-avatar" class="user-avatar">U</div>
+                        <span id="user-display-name">User Profile</span>
+                        <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div id="profileDropdown" class="profile-dropdown" role="menu">
+                        <div class="profile-dropdown-header">
+                            <div id="dropdownAvatar" class="profile-dropdown-avatar">U</div>
+                            <div class="profile-dropdown-info">
+                                <span id="dropdownName" class="profile-dropdown-name">User Profile</span>
+                                <span id="dropdownEmail" class="profile-dropdown-email">user@example.com</span>
+                            </div>
+                        </div>
+                        <div class="profile-dropdown-body">
+                            <a href="dashboard.html" class="profile-dropdown-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                            <a href="expenses.html" class="profile-dropdown-item"><i class="fa-solid fa-receipt"></i> Expenses</a>
+                            <a href="budget.html" class="profile-dropdown-item"><i class="fa-solid fa-piggy-bank"></i> Budgets</a>
+                            <button type="button" class="profile-dropdown-item danger btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+                        </div>
+                    </div>
                 </div>
-                <button id="openBudgetModalBtn" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.88rem;">
-                    <i class="fa-solid fa-pen-to-square"></i> Set Budget
-                </button>
             </div>
         </header>
 

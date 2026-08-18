@@ -11,44 +11,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // 2. Load User Profile in Header
-  initUserProfile();
-
-  // 3. Set Current Month Label
+  // 2. Set Current Month Label
   initCurrentMonthLabel();
 
-  // 4. Fetch and render all dashboard components
+  // 3. Fetch and render all dashboard components
   await loadDashboardData();
 
-  // 5. Re-render charts when theme changes
+  // 4. Re-render charts when theme changes
   window.addEventListener('themeChanged', () => {
     loadCategoryChart();
     loadMonthlyTrendChart();
   });
 });
-
-// Initialize User Profile Badge
-function initUserProfile() {
-  const userString = localStorage.getItem('user');
-  if (userString) {
-    try {
-      const user = JSON.parse(userString);
-      const nameElement = document.getElementById('user-display-name');
-      const avatarElement = document.getElementById('user-avatar');
-
-      if (nameElement && user.name) {
-        nameElement.textContent = user.name;
-      }
-      if (avatarElement && user.name) {
-        avatarElement.textContent = user.name.charAt(0).toUpperCase();
-      }
-    } catch (e) {
-      console.error('Failed to parse user profile:', e);
-    }
-  }
-}
-
-// Current month label in monthly card
 function initCurrentMonthLabel() {
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -168,7 +142,7 @@ async function loadCategoryChart() {
 
     const bgColors = labels.map(label => {
       const lower = label.toLowerCase();
-      return categoryColors[lower] || '#6366f1';
+      return categoryColors[lower] || '#4f46e5';
     });
 
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
@@ -186,34 +160,34 @@ async function loadCategoryChart() {
         datasets: [{
           data: dataValues,
           backgroundColor: bgColors,
-          borderColor: isDark ? '#131c2e' : '#ffffff',
+          borderColor: isDark ? '#111827' : '#ffffff',
           borderWidth: 2,
-          hoverOffset: 8
+          hoverOffset: 6
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '70%',
+        cutout: '72%',
         plugins: {
           legend: {
             position: 'bottom',
             labels: {
               color: textColor,
               font: { family: 'Inter', size: 12, weight: '500' },
-              padding: 16,
+              padding: 14,
               usePointStyle: true,
               pointStyle: 'circle'
             }
           },
           tooltip: {
-            backgroundColor: isDark ? '#090d16' : '#ffffff',
+            backgroundColor: isDark ? '#0b0f19' : '#ffffff',
             titleColor: textColor,
             bodyColor: textColor,
             borderColor: isDark ? '#1e293b' : '#e2e8f0',
             borderWidth: 1,
-            padding: 12,
-            boxPadding: 6,
+            padding: 10,
+            boxPadding: 4,
             callbacks: {
               label: (context) => {
                 const value = context.raw || 0;
@@ -260,18 +234,13 @@ async function loadMonthlyTrendChart() {
 
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     const textColor = isDark ? '#94a3b8' : '#475569';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
 
     if (monthlyTrendChartInstance) {
       monthlyTrendChartInstance.destroy();
     }
 
     const ctx = canvas.getContext('2d');
-    
-    // Create gradient fill
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.85)');
-    gradient.addColorStop(1, 'rgba(6, 182, 212, 0.25)');
 
     monthlyTrendChartInstance = new Chart(ctx, {
       type: 'bar',
@@ -280,10 +249,8 @@ async function loadMonthlyTrendChart() {
         datasets: [{
           label: 'Monthly Spending',
           data: dataValues,
-          backgroundColor: gradient,
-          borderColor: '#6366f1',
-          borderWidth: 1.5,
-          borderRadius: 6,
+          backgroundColor: '#4f46e5',
+          borderRadius: 4,
           borderSkipped: false
         }]
       },
@@ -295,13 +262,13 @@ async function loadMonthlyTrendChart() {
             display: false
           },
           tooltip: {
-            backgroundColor: isDark ? '#090d16' : '#ffffff',
+            backgroundColor: isDark ? '#0b0f19' : '#ffffff',
             titleColor: isDark ? '#f8fafc' : '#0f172a',
             bodyColor: isDark ? '#f8fafc' : '#0f172a',
             borderColor: isDark ? '#1e293b' : '#e2e8f0',
             borderWidth: 1,
-            padding: 12,
-            boxPadding: 6,
+            padding: 10,
+            boxPadding: 4,
             callbacks: {
               label: (context) => ` Spending: ₹${(context.raw || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
             }
@@ -312,7 +279,7 @@ async function loadMonthlyTrendChart() {
             grid: { display: false },
             ticks: {
               color: textColor,
-              font: { family: 'Inter', size: 11, weight: '600' }
+              font: { family: 'Inter', size: 11, weight: '500' }
             }
           },
           y: {
@@ -343,8 +310,8 @@ async function loadRecentTransactions() {
     if (expenses.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="4" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
-            <i class="fa-solid fa-receipt" style="font-size: 1.8rem; margin-bottom: 0.5rem; display: block; color: var(--text-dim);"></i>
+          <td colspan="4" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+            <i class="fa-solid fa-receipt" style="font-size: 1.5rem; margin-bottom: 0.4rem; display: block; color: var(--text-dim);"></i>
             No expenses recorded yet. Click <a href="expenses.html" style="color: var(--primary-400); font-weight: 600;">Add Expense</a> to get started.
           </td>
         </tr>
@@ -361,12 +328,11 @@ async function loadRecentTransactions() {
       const badgeClass = getBadgeClass(item.category_name);
 
       const tr = document.createElement('tr');
-      tr.style.borderBottom = '1px solid var(--border-color)';
       tr.innerHTML = `
-        <td style="padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.9rem;">${formattedDate}</td>
-        <td style="padding: 1rem 1.5rem; color: var(--text-main); font-weight: 600;">${escapeHtml(item.title)}</td>
-        <td style="padding: 1rem 1.5rem;"><span class="badge ${badgeClass}">${escapeHtml(item.category_name || 'General')}</span></td>
-        <td style="padding: 1rem 1.5rem; font-weight: 700; color: var(--text-main);">₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="color: var(--text-muted); font-size: 0.85rem;">${formattedDate}</td>
+        <td style="font-weight: 600;">${escapeHtml(item.title)}</td>
+        <td><span class="badge ${badgeClass}">${escapeHtml(item.category_name || 'General')}</span></td>
+        <td style="font-weight: 700; color: var(--text-main);">₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       `;
       tbody.appendChild(tr);
     });

@@ -3,7 +3,10 @@ const pool = require('../config/db');
 const categoryModel = {
   // Fetch all categories
   async getAll() {
-    const [rows] = await pool.query('SELECT id, name FROM categories ORDER BY name ASC');
+    const [rows] = await pool.query(
+      `SELECT id, name FROM categories 
+       ORDER BY CASE WHEN name = 'Other' THEN 1 ELSE 0 END ASC, name ASC`
+    );
     return rows;
   },
 

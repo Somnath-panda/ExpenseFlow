@@ -2,9 +2,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
-// Email regex pattern for validation
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// RFC 5322 Compliant Email Regex Validation
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 128;
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 150;
 
 // Helper to generate JWT token
 const generateToken = (userId) => {
@@ -29,6 +32,13 @@ const authController = {
         });
       }
 
+      if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid input data types.'
+        });
+      }
+
       const trimmedName = name.trim();
       const trimmedEmail = email.trim().toLowerCase();
 
@@ -39,15 +49,21 @@ const authController = {
         });
       }
 
-      // 2. Validate email format
-      if (!EMAIL_REGEX.test(trimmedEmail)) {
+      if (trimmedName.length > MAX_NAME_LENGTH) {
+        return res.status(400).json({
+          success: false,
+          message: `Name must not exceed ${MAX_NAME_LENGTH} characters.`
+        });
+      }
+
+      if (trimmedEmail.length > MAX_EMAIL_LENGTH || !EMAIL_REGEX.test(trimmedEmail)) {
         return res.status(400).json({
           success: false,
           message: 'Please provide a valid email address.'
         });
       }
 
-      // 3. Validate password length
+      // 2. Validate password length
       if (password.length < MIN_PASSWORD_LENGTH) {
         return res.status(400).json({
           success: false,
@@ -55,7 +71,14 @@ const authController = {
         });
       }
 
-      // 4. Check if email already exists
+      if (password.length > MAX_PASSWORD_LENGTH) {
+        return res.status(400).json({
+          success: false,
+          message: `Password must not exceed ${MAX_PASSWORD_LENGTH} characters.`
+        });
+      }
+
+      // 3. Check if email already exists
       const existingUser = await userModel.findByEmail(trimmedEmail);
       if (existingUser) {
         return res.status(409).json({
@@ -64,18 +87,18 @@ const authController = {
         });
       }
 
-      // 5. Hash password with bcrypt
+      // 4. Hash password with bcrypt
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      // 6. Create user record
+      // 5. Create user record
       const userId = await userModel.create(trimmedName, trimmedEmail, hashedPassword);
       const newUser = await userModel.findById(userId);
 
-      // 7. Generate JWT token
+      // 6. Generate JWT token
       const token = generateToken(userId);
 
-      // 8. Return response (never include password or password hash)
+      // 7. Return response (never include password or password hash)
       return res.status(201).json({
         success: true,
         message: 'User registered successfully',
@@ -95,7 +118,7 @@ const authController = {
       const { email, password } = req.body;
 
       // 1. Validate inputs
-      if (!email || !password) {
+      if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
         return res.status(400).json({
           success: false,
           message: 'Please provide both email and password.'
